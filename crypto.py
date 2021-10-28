@@ -1,5 +1,6 @@
 import math
 import random
+import sys
 
 # helper functions
 class acol:
@@ -54,18 +55,19 @@ def gen_large_primes(min_bitlen):
         p = p + 2
     while not rabin_miller(q, 40):
         q = q + 2
-    return (p, q)
+    return p, q
 
 def interactive_rsa():
     print(f"{acol.HDR}Welcome to RSA Interactive Mode.{acol.END}")
-    input(f"Press ENTER to generate 2 large primes of size 1024 < len < 2048.  This can take some time.")
-    (p, q) = gen_large_primes(min_bitlen=1024)
+    input(f"Press ENTER to generate 2 large primes of size 1024 < bitlength < 2048.  This can take several seconds.")
+    p, q = gen_large_primes(min_bitlen=1024)
     bign_print(p, "p")
     bign_print(q, "q")
     n = p * q
     bign_print(n, "n = p * q")
-    phin = phi(p,q)
+    phin = (p - 1) * (q - 1)
     bign_print(phin, "φ(n)")
+    print("Note that φ(n) is close to n, but not equal to it!")
 
     e = 65537
     print(f"Using e = {acol.YEL}{e}{acol.END}.")
@@ -105,7 +107,7 @@ def interactive_rsa():
 def gen_keys():
 
     # public key
-    (p, q) = gen_large_primes(min_bitlen=1024)
+    p, q = gen_large_primes(min_bitlen=1024)
     n = p * q
     phin = (p - 1) * (q - 1)
     e = 65537
@@ -150,7 +152,11 @@ def decrypt_message(d,n):
         f.write(msg)
 
 def main():
-    interactive_rsa()
+    try:
+        interactive_rsa()
+    except KeyboardInterrupt:
+        print("\nGoodbye!")
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()
